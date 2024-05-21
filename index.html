@@ -62,7 +62,9 @@
         // Initialize the map and set its view to the world
         var map = L.map('map', {
             maxBounds: bounds,
-            maxBoundsViscosity: 1.0
+            maxBoundsViscosity: 1.0,
+            minZoom: 2, // Minimum zoom level
+            maxZoom: 18 // Maximum zoom level (optional)
         }).setView([0, 0], 2);
 
         // Set up the OSM layer
