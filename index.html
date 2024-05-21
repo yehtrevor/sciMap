@@ -88,16 +88,6 @@
             }
         }
 
-        // Function to slightly offset overlapping points
-        function getOffsetCoords(lat, lng, index, total) {
-            var offsetFactor = 0.0001; // Adjust this value to control the offset distance
-            var angle = (index / total) * 2 * Math.PI;
-            return [
-                lat + offsetFactor * Math.sin(angle),
-                lng + offsetFactor * Math.cos(angle)
-            ];
-        }
-
         // Load coordinates from an external JSON file and add them as markers
         fetch('coordinates.json')
             .then(response => response.json())
