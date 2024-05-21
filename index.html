@@ -88,14 +88,36 @@
             }
         }
 
+        // Function to slightly offset overlapping points
+        function getOffsetCoords(lat, lng, index, total) {
+            var offsetFactor = 0.0001; // Adjust this value to control the offset distance
+            var angle = (index / total) * 2 * Math.PI;
+            return [
+                lat + offsetFactor * Math.sin(angle),
+                lng + offsetFactor * Math.cos(angle)
+            ];
+        }
+
         // Load coordinates from an external JSON file and add them as markers
         fetch('coordinates.json')
             .then(response => response.json())
             .then(data => {
+                var groupedCoords = {};
                 data.forEach(location => {
-                    L.marker([location.lat, location.lng]).addTo(map)
-                        .bindPopup(location.popup)
-                        .openPopup();
+                    var key = `${location.lat},${location.lng}`;
+                    if (!groupedCoords[key]) {
+                        groupedCoords[key] = [];
+                    }
+                    groupedCoords[key].push(location);
+                });
+
+                Object.keys(groupedCoords).forEach(key => {
+                    var locations = groupedCoords[key];
+                    locations.forEach((location, index) => {
+                        var offsetCoords = getOffsetCoords(location.lat, location.lng, index, locations.length);
+                        L.marker(offsetCoords).addTo(map)
+                            .bindPopup(location.popup);
+                    });
                 });
             })
             .catch(error => console.error('Error loading coordinates:', error));
