@@ -54,8 +54,16 @@
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
+        // Define the bounds for the map
+        var southWest = L.latLng(-85, -180);
+        var northEast = L.latLng(85, 180);
+        var bounds = L.latLngBounds(southWest, northEast);
+
         // Initialize the map and set its view to the world
-        var map = L.map('map').setView([0, 0], 2);
+        var map = L.map('map', {
+            maxBounds: bounds,
+            maxBoundsViscosity: 1.0
+        }).setView([0, 0], 2);
 
         // Set up the OSM layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
