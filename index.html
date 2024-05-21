@@ -54,7 +54,7 @@
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
-        // Define the bounds for the map
+        // Define the bounds for the map to make it non-repetitive
         var southWest = L.latLng(-85, -180);
         var northEast = L.latLng(85, 180);
         var bounds = L.latLngBounds(southWest, northEast);
@@ -64,7 +64,8 @@
             maxBounds: bounds,
             maxBoundsViscosity: 1.0,
             minZoom: 2, // Minimum zoom level
-            maxZoom: 18 // Maximum zoom level (optional)
+            maxZoom: 18, // Maximum zoom level (optional)
+            worldCopyJump: false // Prevents the map from repeating
         }).setView([0, 0], 2);
 
         // Set up the OSM layer
