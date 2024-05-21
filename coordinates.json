@@ -1,17 +1,5 @@
 [
-    {
-        "lat": 48.8588443,
-        "lng": 2.2943506,
-        "popup": "<b>Eiffel Tower</b><br>Paris, France<br>Constructed in 1889"
-    },
-    {
-        "lat": 40.689247,
-        "lng": -74.044502,
-        "popup": "<b>Statue of Liberty</b><br>New York, USA<br>Dedicated in 1886"
-    },
-    {
-        "lat": 34.052235,
-        "lng": -118.243683,
-        "popup": "<b>Los Angeles</b><br>California, USA<br>Known for Hollywood"
-    }
+    {"lat": 48.8588443, "lng": 2.2943506, "popup": "Eiffel Tower"},
+    {"lat": 40.689247, "lng": -74.044502, "popup": "Statue of Liberty"},
+    {"lat": 34.052235, "lng": -118.243683, "popup": "Los Angeles"}
 ]
