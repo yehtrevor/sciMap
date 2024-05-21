@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>World Map with Leaflet</title>
+    <title>World Map with Leaflet and Search</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
         /* Set the size of the map container */
         #map {
-            height: 100%;
+            height: 90%;
             width: 100%;
-            min-height: 400px; /* Ensures a minimum height */
         }
 
         /* Ensure the body and html elements take up full height */
@@ -18,10 +17,39 @@
             height: 100%;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Style for the search bar */
+        #search-container {
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        #search-container input {
+            margin-right: 10px;
+            padding: 5px;
+            font-size: 16px;
+        }
+
+        #search-container button {
+            padding: 5px 10px;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
+    <div id="search-container">
+        <input type="text" id="lat" placeholder="Latitude">
+        <input type="text" id="lng" placeholder="Longitude">
+        <button onclick="goToLocation()">Go</button>
+    </div>
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -33,6 +61,21 @@
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
+
+        // Function to go to the specified location
+        function goToLocation() {
+            var lat = parseFloat(document.getElementById('lat').value);
+            var lng = parseFloat(document.getElementById('lng').value);
+
+            if (!isNaN(lat) && !isNaN(lng)) {
+                map.setView([lat, lng], 10);
+                L.marker([lat, lng]).addTo(map)
+                    .bindPopup("Coordinates: " + lat + ", " + lng)
+                    .openPopup();
+            } else {
+                alert('Please enter valid coordinates.');
+            }
+        }
     </script>
 </body>
 </html>
