@@ -2,115 +2,53 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>World Map with Leaflet and Search</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <title>Top US Universities Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
-        /* Set the size of the map container */
         #map {
-            height: 90%;
-            width: 100%;
-        }
-
-        /* Ensure the body and html elements take up full height */
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Style for the search bar */
-        #search-container {
-            padding: 10px;
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-
-        #search-container input {
-            margin-right: 10px;
-            padding: 5px;
-            font-size: 16px;
-        }
-
-        #search-container button {
-            padding: 5px 10px;
-            font-size: 16px;
+            height: 100vh;
         }
     </style>
 </head>
 <body>
-    <div id="search-container">
-        <input type="text" id="lat" placeholder="Latitude">
-        <input type="text" id="lng" placeholder="Longitude">
-        <button onclick="goToLocation()">Go</button>
-    </div>
     <div id="map"></div>
-
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-        // Define the bounds for the map to make it non-repetitive
-        var southWest = L.latLng(-85, -180);
-        var northEast = L.latLng(85, 180);
-        var bounds = L.latLngBounds(southWest, northEast);
+        // Initialize the map and set its view to the United States
+        var map = L.map('map').setView([37.8, -96], 4);
 
-        // Initialize the map and set its view to the world
-        var map = L.map('map', {
-            maxBounds: bounds,
-            maxBoundsViscosity: 1.0,
-            minZoom: 2, // Minimum zoom level
-            maxZoom: 18, // Maximum zoom level (optional)
-            worldCopyJump: false // Prevents the map from repeating
-        }).setView([0, 0], 2);
-
-        // Set up the OSM layer
+        // Load and display the tile layer on the map
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 10,
+            minZoom: 4,
+            noWrap: true,
+            bounds: [
+                [24.396308, -125.0],  // Southwest corner of the US
+                [49.384358, -66.93457] // Northeast corner of the US
+            ],
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Function to go to the specified location
-        function goToLocation() {
-            var lat = parseFloat(document.getElementById('lat').value);
-            var lng = parseFloat(document.getElementById('lng').value);
-
-            if (!isNaN(lat) && !isNaN(lng)) {
-                map.setView([lat, lng], 10);
-                L.marker([lat, lng]).addTo(map)
-                    .bindPopup("Coordinates: " + lat + ", " + lng)
-                    .openPopup();
-            } else {
-                alert('Please enter valid coordinates.');
-            }
-        }
-
-        // Load coordinates from an external JSON file and add them as markers
+        // Fetch the university data from the JSON file and add markers to the map
         fetch('coordinates.json')
             .then(response => response.json())
             .then(data => {
-                var groupedCoords = {};
-                data.forEach(location => {
-                    var key = `${location.lat},${location.lng}`;
-                    if (!groupedCoords[key]) {
-                        groupedCoords[key] = [];
-                    }
-                    groupedCoords[key].push(location);
-                });
-
-                Object.keys(groupedCoords).forEach(key => {
-                    var locations = groupedCoords[key];
-                    locations.forEach((location, index) => {
-                        var offsetCoords = getOffsetCoords(location.lat, location.lng, index, locations.length);
-                        L.marker(offsetCoords).addTo(map)
-                            .bindPopup(location.popup);
-                    });
+                data.forEach(university => {
+                    var marker = L.marker([university.lat, university.lng]).addTo(map);
+                    marker.bindPopup(university.popup);
                 });
             })
-            .catch(error => console.error('Error loading coordinates:', error));
+            .catch(error => console.error('Error fetching university data:', error));
+        
+        // Limit the panning bounds to the United States
+        var southWest = L.latLng(24.396308, -125.0),
+            northEast = L.latLng(49.384358, -66.93457),
+            bounds = L.latLngBounds(southWest, northEast);
+
+        map.setMaxBounds(bounds);
+        map.on('drag', function() {
+            map.panInsideBounds(bounds, { animate: false });
+        });
     </script>
 </body>
 </html>
