@@ -87,6 +87,18 @@
                 alert('Please enter valid coordinates.');
             }
         }
+
+        // Load coordinates from an external JSON file and add them as markers
+        fetch('coordinates.json')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(location => {
+                    L.marker([location.lat, location.lng]).addTo(map)
+                        .bindPopup(location.popup)
+                        .openPopup();
+                });
+            })
+            .catch(error => console.error('Error loading coordinates:', error));
     </script>
 </body>
 </html>
